@@ -1,584 +1,486 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Email Template Generator</title>
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #f7f7f7;
-        color: #333;
-        margin: 20px;
-        padding: 20px;
-      }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            color: #333;
+            margin: 20px;
+            padding: 20px;
+        }
 
-      h2 {
-        color: #cd1409;
-        border-bottom: 3px solid #cd1409;
-        padding-bottom: 10px;
-      }
+        h2 {
+            color: #cd1409;
+            border-bottom: 3px solid #cd1409;
+            padding-bottom: 10px;
+        }
 
-      label {
-        color: #cd1409;
-        font-weight: bold;
-      }
+        label {
+            color: #cd1409;
+            font-weight: bold;
+        }
 
-      input,
-      textarea {
-        width: 100%;
-        padding: 10px;
-        font-size: 14px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        margin-bottom: 15px;
-        box-sizing: border-box;
-        background-color: white;
-      }
+        input,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            background-color: white;
+        }
 
-      textarea {
-        height: 100px;
-        resize: vertical;
-      }
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
 
-      button {
-        padding: 8px 12px;
-        background-color: #cd1409;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 14px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        transition: background-color 0.3s ease;
-      }
+        button {
+            padding: 8px 12px;
+            background-color: #cd1409;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background-color 0.3s ease;
+        }
 
-      button:hover {
-        background-color: #a10f08;
-      }
+        button:hover {
+            background-color: #a10f08;
+        }
 
-      .container {
-        max-width: 800px;
-        margin: 0 auto;
-        background-color: white;
-        padding: 20px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
-      }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
 
-      .form-group {
-        margin-bottom: 20px;
-      }
+        .form-group {
+            margin-bottom: 20px;
+        }
 
-      /* Modal styles */
-      .modal {
-        display: none;
-        position: fixed;
-        z-index: 1;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        justify-content: center;
-        align-items: center;
-      }
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
 
-      .modal-content {
-        background-color: white;
-        padding: 20px;
-        border-radius: 8px;
-        max-width: 600px;
-        width: 90%;
-        height: auto;
-        text-align: left;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-      }
-      
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 600px;
+            width: 90%;
+            height: auto;
+            text-align: left;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
 
-      .modal-header {
-        font-weight: bold;
-        color: #cd1409;
-        margin-bottom: 20px;
-        font-size: 18px;
-      }
+        .modal-header {
+            font-weight: bold;
+            color: #cd1409;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
 
-      .attendee-list {
-        max-height: 300px;
-        overflow-y: auto;
-        margin-bottom: 20px;
-      }
+        .attendee-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
 
-      .attendee-item {
-        display: flex;
-        justify-content: space-between;
-        padding: 5px 10px;
-        cursor: pointer;
-        border-bottom: 1px solid #eee;
-      }
+        .attendee-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
 
-      .attendee-item:hover {
-        background-color: #f0f0f0;
-      }
+        .attendee-item:hover {
+            background-color: #f0f0f0;
+        }
 
-      .selected-attendees {
-        margin-top: 15px;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        max-height: 100px;
-        overflow-y: auto;
-      }
+        .selected-attendees {
+            margin-top: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            max-height: 100px;
+            overflow-y: auto;
+        }
 
-      .close-btn {
-        background-color: #cd1409;
-        color: white;
-        padding: 8px 12px;
-        border: none;
-        cursor: pointer;
-        border-radius: 4px;
-        font-size: 14px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        transition: background-color 0.3s ease;
-        align-self: flex-end;
-      }
+        .close-btn {
+            background-color: #cd1409;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background-color 0.3s ease;
+            align-self: flex-end;
+        }
 
-      .close-btn:hover {
-        background-color: #a10f08;
-      }
+        .close-btn:hover {
+            background-color: #a10f08;
+        }
 
-      .select-all-btn {
-        margin-top: 10px;
-        background-color: white; /* White color */
-        color: #cd1409; /* Text color */
-        border: 1px solid #cd1409; /* Border color */
-      }
+        .select-all-btn {
+            margin-top: 10px;
+            background-color: white; /* White color */
+            color: #cd1409; /* Text color */
+            border: 1px solid #cd1409; /* Border color */
+        }
 
-      .select-all-btn:hover {
-        background-color: #f0f0f0; /* Light hover effect */
-      }
+        .select-all-btn:hover {
+            background-color: #f0f0f0; /* Light hover effect */
+        }
 
-      .add-attendee-container {
-        display: flex;
-        margin-top: 10px;
-      }
+        .add-attendee-container {
+            display: flex;
+            margin-top: 10px;
+        }
 
-      .add-attendee-container input {
-        flex-grow: 1;
-        margin-right: 10px;
-      }
+        .add-attendee-container input {
+            flex-grow: 1;
+            margin-right: 10px;
+        }
 
-      .delete-btn {
-        background-color: transparent;
-        color: #cd1409;
-        border: none;
-        cursor: pointer;
-        font-size: 14px;
-        text-decoration: underline;
-      }
+        .delete-btn {
+            background-color: transparent;
+            color: #cd1409;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: underline;
+        }
 
-      .delete-btn:hover {
-        color: #a10f08;
-      }
+        .delete-btn:hover {
+            color: #a10f08;
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     <div class="container">
-      <h2>MOM Email Generator</h2>
+        <h2>MOM Email Generator</h2>
 
-      <div class="form-group">
-        <label for="recipient">To:</label>
-        <input
-          type="email"
-          id="recipient"
-          placeholder="Enter recipient email"
-          required
-        />
-      </div>
+        <div class="form-group">
+            <label for="recipient">To:</label>
+            <input type="email" id="recipient" placeholder="Enter recipient email" required />
+        </div>
 
-      <div class="form-group">
-        <label for="subject">Subject:</label>
-        <input
-          type="text"
-          id="subject"
-          value="Minutes of the Meeting"
-          required
-        />
-      </div>
+        <div class="form-group">
+            <label for="subject">Subject:</label>
+            <input type="text" id="subject" value="Minutes of the Meeting" required />
+        </div>
 
-      <div class="form-group">
-        <label for="date">Meeting Date:</label>
-        <input type="date" id="date" required />
-      </div>
+        <div class="form-group">
+            <label for="date">Meeting Date:</label>
+            <input type="date" id="date" required />
+        </div>
 
-      <div class="form-group">
-        <label for="startTime">Start Time:</label>
-        <input
-          type="time"
-          id="startTime"
-          onchange="calculateDuration()"
-          required
-        />
-      </div>
+        <div class="form-group">
+            <label for="startTime">Start Time:</label>
+            <input type="time" id="startTime" onchange="calculateDuration()" required />
+        </div>
 
-      <div class="form-group">
-        <label for="endTime">End Time:</label>
-        <input
-          type="time"
-          id="endTime"
-          onchange="calculateDuration()"
-          required
-        />
-      </div>
+        <div class="form-group">
+            <label for="endTime">End Time:</label>
+            <input type="time" id="endTime" onchange="calculateDuration()" required />
+        </div>
 
-      <div class="form-group">
-        <label for="duration">Duration:</label>
-        <input
-          type="text"
-          id="duration"
-          placeholder="Duration will be calculated"
-          readonly
-        />
-      </div>
+        <div class="form-group">
+            <label for="duration">Duration:</label>
+            <input type="text" id="duration" placeholder="Duration will be calculated" readonly />
+        </div>
 
-      <div class="form-group">
-        <label>Attendees:</label>
-        <button type="button" onclick="openAttendeesModal()">
-          Select Attendees
-        </button>
-        <div class="selected-attendees" id="selectedAttendeesContainer"></div>
-      </div>
+        <div class="form-group">
+            <label>Attendees:</label>
+            <button type="button" onclick="openAttendeesModal()">Select Attendees</button>
+            <div class="selected-attendees" id="selectedAttendeesContainer"></div>
+        </div>
 
-      <div class="form-group">
-        <label>Presenters:</label>
-        <button type="button" onclick="openPresentersModal()">
-          Select Presenters
-        </button>
-        <div class="selected-attendees" id="selectedPresentersContainer"></div>
-      </div>
+        <div class="form-group">
+            <label>Presenters:</label>
+            <button type="button" onclick="openPresentersModal()">Select Presenters</button>
+            <div class="selected-attendees" id="selectedPresentersContainer"></div>
+        </div>
 
-      <div class="form-group">
-        <label for="agenda">Performance:</label>
-        <textarea id="agenda" placeholder=""></textarea>
-      </div>
+        <div class="form-group">
+            <label for="agenda">Performance:</label>
+            <textarea id="agenda" placeholder=""></textarea>
+        </div>
 
-      <div class="form-group">
-        <label for="notes">Others:</label>
-        <textarea id="notes" placeholder=""></textarea>
-      </div>
+        <div class="form-group">
+            <label for="notes">Others:</label>
+            <textarea id="notes" placeholder=""></textarea>
+        </div>
 
-      <div class="form-group">
-        <label for="actionItems">Announcement:</label>
-        <textarea id="actionItems" placeholder=""></textarea>
-      </div>
+        <div class="form-group">
+            <label for="actionItems">Announcement:</label>
+            <textarea id="actionItems" placeholder=""></textarea>
+        </div>
 
-      <button onclick="generateEmail()">Generate Email</button>
+        <button onclick="generateEmail()">Generate Email</button>
     </div>
 
     <!-- Modal for selecting attendees -->
     <div id="attendeesModal" class="modal">
-      <div class="modal-content">
-        <div class="modal-header">Select Attendees</div>
-        <input
-          type="text"
-          id="attendeeSearch"
-          placeholder="Search attendees..."
-          oninput="filterAttendees()"
-        />
-        <div class="attendee-list" id="attendeeListContainer"></div>
-        <div class="add-attendee-container">
-          <input type="text" id="newAttendee" placeholder="Add new attendee" />
-          <button onclick="addAttendee()">Add</button>
+        <div class="modal-content">
+            <div class="modal-header">Select Attendees</div>
+            <input type="text" id="attendeeSearch" placeholder="Search attendees..." oninput="filterAttendees()" />
+            <div class="attendee-list" id="attendeeListContainer"></div>
+            <div class="add-attendee-container">
+                <input type="text" id="newAttendee" placeholder="Add new attendee" />
+                <button onclick="addAttendee()">Add</button>
+            </div>
+            <button class="select-all-btn" onclick="toggleSelectAll('attendees')">Select All</button>
+            <button class="close-btn" onclick="closeAttendeesModal()">Close</button>
         </div>
-        <button class="select-all-btn" onclick="toggleSelectAll('attendees')">
-          Select All
-        </button>
-        <button class="close-btn" onclick="closeAttendeesModal()">Close</button>
-      </div>
     </div>
 
     <!-- Modal for selecting presenters -->
     <div id="presentersModal" class="modal">
-      <div class="modal-content">
-        <div class="modal-header">Select Presenters</div>
-        <input
-          type="text"
-          id="presenterSearch"
-          placeholder="Search presenters..."
-          oninput="filterPresenters()"
-        />
-        <div class="attendee-list" id="presenterListContainer"></div>
-        <div class="add-attendee-container">
-          <input
-            type="text"
-            id="newPresenter"
-            placeholder="Add new presenter"
-          />
-          <button onclick="addPresenter()">Add</button>
+        <div class="modal-content">
+            <div class="modal-header">Select Presenters</div>
+            <input type="text" id="presenterSearch" placeholder="Search presenters..." oninput="filterPresenters()" />
+            <div class="attendee-list" id="presenterListContainer"></div>
+            <div class="add-attendee-container">
+                <input type="text" id="newPresenter" placeholder="Add new presenter" />
+                <button onclick="addPresenter()">Add</button>
+            </div>
+            <button class="select-all-btn" onclick="toggleSelectAll('presenters')">Select All</button>
+            <button class="close-btn" onclick="closePresentersModal()">Close</button>
         </div>
-        <button class="select-all-btn" onclick="toggleSelectAll('presenters')">
-          Select All
-        </button>
-        <button class="close-btn" onclick="closePresentersModal()">
-          Close
-        </button>
-      </div>
     </div>
 
     <script>
-      let attendeesList = [
-        "Dela Cruz Jeffry",
-        "Caldejon Ruel",
-        "Galera John Philip",
-        "Dela Cruz Katrina",
-        "Vergara Shiela",
-        "Peralta Jennifer",
-        "Noche Jan Allen",
-        "Domingo Jim Dave",
-        "Tamparong Monique",
-        "Gabrinao Ramonchito",
-        "Hoffer Shiela",
-        "Marabi Mark Joseph",
-        "Candare Daniel",
-        "Alcantara Pauline",
-        "Sanico Jezza",
-        "Gonimil Rey",
-        "Majun Haifa",
-        "Reonal John Nico",
-        "Ariz Dailyn",
-        "Delarmino Marissa",
-      ];
+        let attendeesList = [
+            "Dela Cruz Jeffry",
+            "Caldejon Ruel",
+            "Galera John Philip",
+            "Dela Cruz Katrina",
+            "Vergara Shiela",
+            "Peralta Jennifer",
+            "Noche Jan Allen",
+            "Domingo Jim Dave",
+            "Tamparong Monique",
+            "Gabrinao Ramonchito",
+            "Hoffer Shiela",
+            "Marabi Mark Joseph",
+            "Candare Daniel",
+            "Alcantara Pauline",
+            "Sanico Jezza",
+            "Gonimil Rey",
+            "Majun Haifa",
+            "Reonal John Nico",
+            "Ariz Dailyn",
+            "Delarmino Marissa",
+        ];
 
-      const selectedAttendees = new Set();
-      const selectedPresenters = new Set();
+        const selectedAttendees = new Set();
+        const selectedPresenters = new Set();
 
-      // Populate the modal with attendees
-      function openAttendeesModal() {
-        populateModal(
-          attendeesList,
-          selectedAttendees,
-          "attendeeListContainer"
-        );
-        document.getElementById("attendeesModal").style.display = "flex";
-      }
-
-      // Populate the modal with presenters
-      function openPresentersModal() {
-        populateModal(
-          attendeesList,
-          selectedPresenters,
-          "presenterListContainer"
-        );
-        document.getElementById("presentersModal").style.display = "flex";
-      }
-
-      function populateModal(list, selectedSet, containerId) {
-        const container = document.getElementById(containerId);
-        container.innerHTML = ""; // Clear previous content
-
-        list.forEach((item) => {
-          const div = document.createElement("div");
-          div.className = "attendee-item";
-          div.textContent = item;
-          div.onclick = () => toggleItem(item, selectedSet);
-
-          const deleteBtn = document.createElement("button");
-          deleteBtn.textContent = "Delete";
-          deleteBtn.className = "delete-btn";
-          deleteBtn.onclick = (event) => {
-            event.stopPropagation(); // Prevent triggering toggleItem
-            deleteItem(item, list, selectedSet);
-          };
-
-          div.appendChild(deleteBtn);
-          container.appendChild(div);
-        });
-      }
-
-      function toggleItem(item, selectedSet) {
-        if (selectedSet.has(item)) {
-          selectedSet.delete(item);
-        } else {
-          selectedSet.add(item);
+        function openAttendeesModal() {
+            populateModal(attendeesList, selectedAttendees, "attendeeListContainer");
+            document.getElementById("attendeesModal").style.display = "flex";
         }
-        updateSelectedItems(selectedSet);
-      }
 
-      function toggleSelectAll(type) {
-        const set =
-          type === "attendees" ? selectedAttendees : selectedPresenters;
-        const list = attendeesList;
-
-        if (set.size === list.length) {
-          set.clear();
-        } else {
-          list.forEach((item) => set.add(item));
+        function openPresentersModal() {
+            populateModal(attendeesList, selectedPresenters, "presenterListContainer");
+            document.getElementById("presentersModal").style.display = "flex";
         }
-        updateSelectedItems(set);
-      }
 
-      function updateSelectedItems(selectedSet) {
-        const container =
-          selectedSet === selectedAttendees
-            ? document.getElementById("selectedAttendeesContainer")
-            : document.getElementById("selectedPresentersContainer");
+        function populateModal(list, selectedSet, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = ""; // Clear previous content
 
-        container.innerHTML = Array.from(selectedSet).join(", ");
-      }
+            list.forEach((item) => {
+                const div = document.createElement("div");
+                div.className = "attendee-item";
+                div.textContent = item;
+                div.onclick = () => toggleItem(item, selectedSet);
 
-      function closeAttendeesModal() {
-        document.getElementById("attendeesModal").style.display = "none";
-      }
+                const deleteBtn = document.createElement("button");
+                deleteBtn.textContent = "Delete";
+                deleteBtn.className = "delete-btn";
+                deleteBtn.onclick = (event) => {
+                    event.stopPropagation(); // Prevent triggering toggleItem
+                    deleteItem(item, list, selectedSet);
+                };
 
-      function closePresentersModal() {
-        document.getElementById("presentersModal").style.display = "none";
-      }
-
-      function addAttendee() {
-        const newAttendeeInput = document.getElementById("newAttendee");
-        const newAttendee = newAttendeeInput.value.trim();
-        if (newAttendee && !attendeesList.includes(newAttendee)) {
-          attendeesList.push(newAttendee);
-          newAttendeeInput.value = "";
-          closeAttendeesModal(); // Refresh modal content
-          openAttendeesModal(); // Show updated list
+                div.appendChild(deleteBtn);
+                container.appendChild(div);
+            });
         }
-      }
 
-      function addPresenter() {
-        const newPresenterInput = document.getElementById("newPresenter");
-        const newPresenter = newPresenterInput.value.trim();
-        if (newPresenter && !attendeesList.includes(newPresenter)) {
-          attendeesList.push(newPresenter);
-          newPresenterInput.value = "";
-          closePresentersModal(); // Refresh modal content
-          openPresentersModal(); // Show updated list
+        function toggleItem(item, selectedSet) {
+            if (selectedSet.has(item)) {
+                selectedSet.delete(item);
+            } else {
+                selectedSet.add(item);
+            }
+            updateSelectedItems(selectedSet);
         }
-      }
 
-      function filterAttendees() {
-        const searchValue = document
-          .getElementById("attendeeSearch")
-          .value.toLowerCase();
-        const items = document.querySelectorAll(
-          "#attendeeListContainer .attendee-item"
-        );
-        items.forEach((item) => {
-          item.style.display = item.textContent
-            .toLowerCase()
-            .includes(searchValue)
-            ? ""
-            : "none";
-        });
-      }
+        function toggleSelectAll(type) {
+            const set = type === "attendees" ? selectedAttendees : selectedPresenters;
+            const list = attendeesList;
 
-      function filterPresenters() {
-        const searchValue = document
-          .getElementById("presenterSearch")
-          .value.toLowerCase();
-        const items = document.querySelectorAll(
-          "#presenterListContainer .attendee-item"
-        );
-        items.forEach((item) => {
-          item.style.display = item.textContent
-            .toLowerCase()
-            .includes(searchValue)
-            ? ""
-            : "none";
-        });
-      }
-
-      function deleteItem(item, list, selectedSet) {
-        list = list.filter((i) => i !== item);
-        selectedSet.delete(item);
-        updateSelectedItems(selectedSet);
-        closeAttendeesModal(); // Refresh modal content
-        closePresentersModal(); // Refresh modal content
-        openAttendeesModal(); // Show updated list for attendees
-        openPresentersModal(); // Show updated list for presenters
-      }
-
-      function calculateDuration() {
-        const startTime = document.getElementById("startTime").value;
-        const endTime = document.getElementById("endTime").value;
-
-        if (startTime && endTime) {
-          const start = new Date(`1970-01-01T${startTime}`);
-          const end = new Date(`1970-01-01T${endTime}`);
-          const durationInMinutes = (end - start) / 60000;
-          const hours = Math.floor(durationInMinutes / 60);
-          const minutes = durationInMinutes % 60;
-          document.getElementById("duration").value =
-            durationInMinutes > 0
-              ? `${hours} hours ${minutes} minutes`
-              : "Invalid duration";
-        } else {
-          document.getElementById("duration").value = "";
+            if (set.size === list.length) {
+                set.clear();
+            } else {
+                list.forEach((item) => set.add(item));
+            }
+            updateSelectedItems(set);
         }
-      }
 
-      function generateEmail() {
-        const recipient = document.getElementById("recipient").value;
-        const subject = document.getElementById("subject").value;
-        const date = document.getElementById("date").value;
-        const startTime = document.getElementById("startTime").value;
-        const endTime = document.getElementById("endTime").value;
-        const duration = document.getElementById("duration").value;
-        const agenda = document.getElementById("agenda").value;
-        const notes = document.getElementById("notes").value;
-        const actionItems = document.getElementById("actionItems").value;
+        function updateSelectedItems(selectedSet) {
+            const container =
+                selectedSet === selectedAttendees
+                    ? document.getElementById("selectedAttendeesContainer")
+                    : document.getElementById("selectedPresentersContainer");
 
-        const formattedAttendees =
-          selectedAttendees.size > 0
-            ? Array.from(selectedAttendees).join(", ")
-            : "None";
-        const formattedPresenters =
-          selectedPresenters.size > 0
-            ? Array.from(selectedPresenters).join(", ")
-            : "None";
-        const formattedAgenda = formatSection(agenda);
-        const formattedNotes = formatSection(notes);
-        const formattedActionItems = formatSection(actionItems);
+            container.innerHTML = Array.from(selectedSet).join(", ");
+        }
 
-        const body = `
+        function closeAttendeesModal() {
+            document.getElementById("attendeesModal").style.display = "none";
+        }
+
+        function closePresentersModal() {
+            document.getElementById("presentersModal").style.display = "none";
+        }
+
+        function addAttendee() {
+            const newAttendeeInput = document.getElementById("newAttendee");
+            const newAttendee = newAttendeeInput.value.trim();
+            if (newAttendee && !attendeesList.includes(newAttendee)) {
+                attendeesList.push(newAttendee);
+                newAttendeeInput.value = "";
+                closeAttendeesModal(); // Refresh modal content
+                openAttendeesModal(); // Show updated list
+            }
+        }
+
+        function addPresenter() {
+            const newPresenterInput = document.getElementById("newPresenter");
+            const newPresenter = newPresenterInput.value.trim();
+            if (newPresenter && !attendeesList.includes(newPresenter)) {
+                attendeesList.push(newPresenter);
+                newPresenterInput.value = "";
+                closePresentersModal(); // Refresh modal content
+                openPresentersModal(); // Show updated list
+            }
+        }
+
+        function filterAttendees() {
+            const searchValue = document.getElementById("attendeeSearch").value.toLowerCase();
+            const items = document.querySelectorAll("#attendeeListContainer .attendee-item");
+            items.forEach((item) => {
+                item.style.display = item.textContent.toLowerCase().includes(searchValue) ? "" : "none";
+            });
+        }
+
+        function filterPresenters() {
+            const searchValue = document.getElementById("presenterSearch").value.toLowerCase();
+            const items = document.querySelectorAll("#presenterListContainer .attendee-item");
+            items.forEach((item) => {
+                item.style.display = item.textContent.toLowerCase().includes(searchValue) ? "" : "none";
+            });
+        }
+
+        function deleteItem(item, list, selectedSet) {
+            list = list.filter((i) => i !== item);
+            selectedSet.delete(item);
+            updateSelectedItems(selectedSet);
+            closeAttendeesModal(); // Refresh modal content
+            closePresentersModal(); // Refresh modal content
+            openAttendeesModal(); // Show updated list for attendees
+            openPresentersModal(); // Show updated list for presenters
+        }
+
+        function calculateDuration() {
+            const startTime = document.getElementById("startTime").value;
+            const endTime = document.getElementById("endTime").value;
+
+            if (startTime && endTime) {
+                const start = new Date(`1970-01-01T${startTime}`);
+                const end = new Date(`1970-01-01T${endTime}`);
+                const durationInMinutes = (end - start) / 60000;
+                const hours = Math.floor(durationInMinutes / 60);
+                const minutes = durationInMinutes % 60;
+                document.getElementById("duration").value =
+                    durationInMinutes > 0 ? `${hours} hours ${minutes} minutes` : "Invalid duration";
+            } else {
+                document.getElementById("duration").value = "";
+            }
+        }
+
+        function generateEmail() {
+            const recipient = document.getElementById("recipient").value;
+            const subject = document.getElementById("subject").value;
+            const date = document.getElementById("date").value;
+            const startTime = document.getElementById("startTime").value;
+            const endTime = document.getElementById("endTime").value;
+            const duration = document.getElementById("duration").value;
+            const agenda = document.getElementById("agenda").value;
+            const notes = document.getElementById("notes").value;
+            const actionItems = document.getElementById("actionItems").value;
+
+            const formattedAttendees = selectedAttendees.size > 0 ? Array.from(selectedAttendees).join(", ") : "None";
+            const formattedPresenters = selectedPresenters.size > 0 ? Array.from(selectedPresenters).join(", ") : "None";
+            const formattedAgenda = formatSection(agenda);
+            const formattedNotes = formatSection(notes);
+            const formattedActionItems = formatSection(actionItems);
+
+            const body = `
 Meeting Minutes
 
-Date: ${date}
-Start Time: ${startTime}
-End Time: ${endTime}
-Duration: ${duration}
+<table>
+<tr><th>Date</th><td>${date}</td></tr>
+<tr><th>Start Time</th><td>${startTime}</td></tr>
+<tr><th>End Time</th><td>${endTime}</td></tr>
+<tr><th>Duration</th><td>${duration}</td></tr>
+<tr><th>Attendees</th><td>${formattedAttendees}</td></tr>
+<tr><th>Presenters</th><td>${formattedPresenters}</td></tr>
+<tr><th>Agenda</th><td>${formattedAgenda}</td></tr>
+<tr><th>Notes</th><td>${formattedNotes}</td></tr>
+<tr><th>Action Items</th><td>${formattedActionItems}</td></tr>
+</table>
+            `.trim();
 
-Attendees:
-${formattedAttendees}
+            const emailBody = encodeURIComponent(body);
+            window.location.href = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${emailBody}`;
+        }
 
-Presenters:
-${formattedPresenters}
-
-Agenda:
-${formattedAgenda}
-
-Notes:
-${formattedNotes}
-
-Action Items:
-${formattedActionItems}
-      `.trim();
-
-        const emailBody = encodeURIComponent(body);
-        window.location.href = `mailto:${recipient}?subject=${encodeURIComponent(
-          subject
-        )}&body=${emailBody}`;
-      }
-
-      function formatSection(content) {
-        return content
-          .split("\n")
-          .map((item) => `- ${item}`)
-          .join("\n");
-      }
+        function formatSection(content) {
+            return content.split("\n").map((item) => `- ${item}`).join("<br/>");
+        }
     </script>
-  </body>
+</body>
 </html>
