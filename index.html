@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Template Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f7f7f7;
+      color: #333;
+      margin: 20px;
+      padding: 20px;
+    }
+
+    h2 {
+      color: #CD1409;
+      border-bottom: 3px solid #CD1409;
+      padding-bottom: 10px;
+    }
+
+    label {
+      color: #CD1409;
+      font-weight: bold;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      box-sizing: border-box;
+      background-color: white;
+    }
+
+    textarea {
+      height: 100px;
+      resize: vertical;
+    }
+
+    button {
+      padding: 8px 12px;
+      background-color: #CD1409;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #a10f08;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      max-width: 600px;
+      width: 90%;
+      height: auto;
+      text-align: left;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-header {
+      font-weight: bold;
+      color: #CD1409;
+      margin-bottom: 20px;
+      font-size: 18px;
+    }
+
+    .checkbox-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px; 
+      max-height: 400px; 
+      overflow-y: auto; 
+    }
+
+    .checkbox-list label {
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      margin: 0;
+      padding: 5px 0; 
+    }
+
+    .checkbox-list input {
+      margin-right: 10px; 
+      cursor: pointer;
+    }
+
+    .close-btn {
+      background-color: #CD1409;
+      color: white;
+      padding: 8px 12px;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .close-btn:hover {
+      background-color: #a10f08;
+    }
+
+    .modal-footer {
+      margin-top: 15px;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Meeting Minutes Email Generator</h2>
+
+    <div class="form-group">
+      <label for="recipient">To:</label>
+      <input type="email" id="recipient" placeholder="Enter recipient email" required>
+    </div>
+
+    <div class="form-group">
+      <label for="subject">Subject:</label>
+      <input type="text" id="subject" value="Minutes of the Meeting" required>
+    </div>
+
+    <div class="form-group">
+      <label for="date">Meeting Date:</label>
+      <input type="date" id="date" required>
+    </div>
+
+    <div class="form-group">
+      <label for="agenda">Agenda:</label>
+      <textarea id="agenda" placeholder="Enter the meeting agenda"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="notes">Notes:</label>
+      <textarea id="notes" placeholder="Enter meeting notes"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Attendees:</label>
+      <button type="button" onclick="openModal()">Select Attendees</button>
+    </div>
+
+    <div class="form-group">
+      <label for="actionItems">Action Items:</label>
+      <textarea id="actionItems" placeholder="List of action items"></textarea>
+    </div>
+
+    <button onclick="generateEmail()">Generate Email</button>
+  </div>
+
+  <!-- Modal for selecting attendees -->
+  <div id="attendeesModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">Select Attendees</div>
+      
+      <!-- Select All Checkbox -->
+      <label>
+        <input type="checkbox" id="selectAll" onclick="toggleSelectAll()"> Select All
+      </label>
+
+      <div id="attendeesContainer" class="checkbox-list"></div>
+      <div class="modal-footer">
+        <button class="close-btn" onclick="closeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // List of 20 sample attendees
+    const attendeesList = [
+      "John Doe", "Jane Smith", "Alice Johnson", "Bob Lee", "Emma Brown",
+      "Michael Green", "Sophia White", "Chris Black", "Olivia Gray", "James Blue",
+      "William Red", "Isabella Pink", "David Yellow", "Emily Purple", "Ethan Orange",
+      "Liam Cyan", "Ava Magenta", "Noah Brown", "Mia Green", "Lucas White"
+    ];
+
+    // Function to open the modal
+    function openModal() {
+      const modal = document.getElementById('attendeesModal');
+      const container = document.getElementById('attendeesContainer');
+      container.innerHTML = ''; // Clear the container before generating new checkboxes
+
+      attendeesList.forEach((attendee, index) => {
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = 'attendee' + index;
+        checkbox.value = attendee;
+
+        const label = document.createElement('label');
+        label.htmlFor = 'attendee' + index;
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(attendee));
+
+        container.appendChild(label);
+      });
+
+      modal.style.display = 'flex'; // Show modal
+    }
+
+    // Function to close the modal
+    function closeModal() {
+      document.getElementById('attendeesModal').style.display = 'none';
+      document.getElementById('selectAll').checked = false; // Reset select all checkbox
+      const checkboxes = document.querySelectorAll('.checkbox-list input[type="checkbox"]');
+      checkboxes.forEach(checkbox => checkbox.checked = false); // Reset individual checkboxes
+    }
+
+    // Function to toggle select/deselect all checkboxes
+    function toggleSelectAll() {
+      const selectAllCheckbox = document.getElementById('selectAll');
+      const checkboxes = document.querySelectorAll('.checkbox-list input[type="checkbox"]');
+      checkboxes.forEach(checkbox => checkbox.checked = selectAllCheckbox.checked);
+    }
+
+    // Function to format sections with dashes and indentation
+    function formatSection(content) {
+      return content
+        .split('\n')
+        .map(item => `- ${item}`)
+        .join('\n\t');
+    }
+
+    // Function to get selected attendees
+    function getSelectedAttendees() {
+      const selectedAttendees = [];
+      attendeesList.forEach((_, index) => {
+        const checkbox = document.getElementById('attendee' + index);
+        if (checkbox && checkbox.checked) {
+          selectedAttendees.push(checkbox.value);
+        }
+      });
+      return selectedAttendees.join('\n');
+    }
+
+    function generateEmail() {
+      var recipient = document.getElementById("recipient").value;
+      var subject = document.getElementById("subject").value;
+      var date = document.getElementById("date").value;
+      var agenda = document.getElementById("agenda").value;
+      var notes = document.getElementById("notes").value;
+      var actionItems = document.getElementById("actionItems").value;
+      var selectedAttendees = getSelectedAttendees(); // Get selected attendees
+
+      var formattedAgenda = formatSection(agenda);
+      var formattedNotes = formatSection(notes);
+      var formattedAttendees = formatSection(selectedAttendees);
+      var formattedActionItems = formatSection(actionItems);
+
+      var body = `
+Meeting Minutes\n\n
+Date: ${date}\n\n
+Agenda:\n\t${formattedAgenda}\n\n
+Notes:\n\t${formattedNotes}\n\n
+Attendees:\n\t${formattedAttendees}\n\n
+Action Items:\n\t${formattedActionItems}
+      `;
+
+      var emailBody = encodeURIComponent(body);
+      window.location.href = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${emailBody}`;
+    }
+  </script>
+
+</body>
+</html>
