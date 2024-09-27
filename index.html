@@ -533,7 +533,7 @@
 }
 
 
-      function generateEmail() {
+function generateEmail() {
     const recipient = document.getElementById("recipient").value;
     const subject = document.getElementById("subject").value;
     const date = document.getElementById("date").value;
@@ -559,7 +559,7 @@
     // Get today's date in YYYY-MM-DD format
     const today = new Date().toISOString().split('T')[0];
 
-    // Create HTML email content with a red and grey design
+    // Create HTML email content with red and yellow design
     const emailContent = `
 <!DOCTYPE html>
 <html lang="en">
@@ -582,7 +582,7 @@
             border-radius: 5px;
         }
         .header {
-            background-color: #cd1409; /* Red Header */
+            background-color: #D41C2C; /* Red Header */
             padding: 20px; /* Increased padding */
             text-align: center;
             color: white;
@@ -596,24 +596,25 @@
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
-            border: 1px solid #cd1409; /* Added border to table */
+            border: 1px solid #D41C2C; /* Red border for main table */
         }
         th, td {
             padding: 15px; /* Increased padding */
             text-align: left;
         }
         th {
-            background-color: #cd1409; /* Red Header for table */
-            color: white;
+            background-color: #FCCC44; /* Yellow Header for table */
+            color: black; /* Black text for contrast */
             font-size: 16px; /* Larger font size */
         }
         td {
             background-color: #f9f9f9; /* Light Grey for data cells */
             font-size: 14px; /* Standard font size for data */
         }
-        .small {
+        .details {
             font-size: 12px; /* Smaller font size for date, start time, end time, and duration */
             color: #555; /* Dark grey for better readability */
+            margin: 10px 0; /* Margin for spacing */
         }
         .footer {
             margin: 20px 0;
@@ -629,23 +630,13 @@
         <div class="header">
             <h2>Meeting Minutes</h2>
         </div>
+        <div class="details">
+            <strong>Date:</strong> ${date}<br>
+            <strong>Start Time:</strong> ${startTime}<br>
+            <strong>End Time:</strong> ${endTime}<br>
+            <strong>Duration:</strong> ${duration}
+        </div>
         <table>
-            <tr>
-                <th>Date</th>
-                <td class="small">${date}</td>
-            </tr>
-            <tr>
-                <th>Start Time</th>
-                <td class="small">${startTime}</td>
-            </tr>
-            <tr>
-                <th>End Time</th>
-                <td class="small">${endTime}</td>
-            </tr>
-            <tr>
-                <th>Duration</th>
-                <td class="small">${duration}</td>
-            </tr>
             <tr>
                 <th>Attendees</th>
                 <td>${formattedAttendees}</td>
@@ -697,7 +688,6 @@ function formatSection(content) {
         .map((item) => `- ${item}`)
         .join("<br/>"); // Use <br/> for HTML line breaks
 }
-
 
     </script>
   </body>
