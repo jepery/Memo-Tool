@@ -276,6 +276,7 @@
       </div>
 
       <button onclick="generateEmail()">Generate Email</button>
+      <button onclick="draftEmail()">Draft Email</button>
     </div>
 
     <!-- Modal for selecting attendees -->
@@ -520,65 +521,184 @@
         }
       }
 
-      function generateEmail() {
-        const recipient = document.getElementById("recipient").value;
-        const subject = document.getElementById("subject").value;
-        const date = document.getElementById("date").value;
-        const startTime = document.getElementById("startTime").value;
-        const endTime = document.getElementById("endTime").value;
-        const duration = document.getElementById("duration").value;
-        const agenda = document.getElementById("agenda").value;
-        const notes = document.getElementById("notes").value;
-        const actionItems = document.getElementById("actionItems").value;
+      function draftEmail() {
+    const recipient = document.getElementById("recipient").value;
+    const subject = document.getElementById("subject").value;
 
-        const formattedAttendees =
-          selectedAttendees.size > 0
+    // Create mailto link
+    const mailtoLink = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=`;
+
+    // Open mail client
+    window.location.href = mailtoLink;
+}
+
+
+      function generateEmail() {
+    const recipient = document.getElementById("recipient").value;
+    const subject = document.getElementById("subject").value;
+    const date = document.getElementById("date").value;
+    const startTime = document.getElementById("startTime").value;
+    const endTime = document.getElementById("endTime").value;
+    const duration = document.getElementById("duration").value;
+    const agenda = document.getElementById("agenda").value;
+    const notes = document.getElementById("notes").value;
+    const actionItems = document.getElementById("actionItems").value;
+
+    const formattedAttendees =
+        selectedAttendees.size > 0
             ? Array.from(selectedAttendees).join(", ")
             : "None";
-        const formattedPresenters =
-          selectedPresenters.size > 0
+    const formattedPresenters =
+        selectedPresenters.size > 0
             ? Array.from(selectedPresenters).join(", ")
             : "None";
-        const formattedAgenda = formatSection(agenda);
-        const formattedNotes = formatSection(notes);
-        const formattedActionItems = formatSection(actionItems);
+    const formattedAgenda = formatSection(agenda);
+    const formattedNotes = formatSection(notes);
+    const formattedActionItems = formatSection(actionItems);
 
-        const body = `
-Meeting Minutes
+    // Get today's date in YYYY-MM-DD format
+    const today = new Date().toISOString().split('T')[0];
 
-Date: ${date}
-Start Time: ${startTime}
-End Time: ${endTime}
-Duration: ${duration}
+    // Create HTML email content with a red and grey design
+    const emailContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Minutes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+        }
+        .container {
+            max-width: 800px; /* Increased size */
+            margin: 20px auto;
+            background-color: #ffffff;
+            padding: 30px; /* Increased padding */
+            border-radius: 5px;
+        }
+        .header {
+            background-color: #cd1409; /* Red Header */
+            padding: 20px; /* Increased padding */
+            text-align: center;
+            color: white;
+            font-size: 24px; /* Larger font size */
+            border-radius: 5px 5px 0 0;
+        }
+        h2 {
+            margin: 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            border: 1px solid #cd1409; /* Added border to table */
+        }
+        th, td {
+            padding: 15px; /* Increased padding */
+            text-align: left;
+        }
+        th {
+            background-color: #cd1409; /* Red Header for table */
+            color: white;
+            font-size: 16px; /* Larger font size */
+        }
+        td {
+            background-color: #f9f9f9; /* Light Grey for data cells */
+            font-size: 14px; /* Standard font size for data */
+        }
+        .small {
+            font-size: 12px; /* Smaller font size for date, start time, end time, and duration */
+            color: #555; /* Dark grey for better readability */
+        }
+        .footer {
+            margin: 20px 0;
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Meeting Minutes</h2>
+        </div>
+        <table>
+            <tr>
+                <th>Date</th>
+                <td class="small">${date}</td>
+            </tr>
+            <tr>
+                <th>Start Time</th>
+                <td class="small">${startTime}</td>
+            </tr>
+            <tr>
+                <th>End Time</th>
+                <td class="small">${endTime}</td>
+            </tr>
+            <tr>
+                <th>Duration</th>
+                <td class="small">${duration}</td>
+            </tr>
+            <tr>
+                <th>Attendees</th>
+                <td>${formattedAttendees}</td>
+            </tr>
+            <tr>
+                <th>Presenters</th>
+                <td>${formattedPresenters}</td>
+            </tr>
+            <tr>
+                <th>Performance</th>
+                <td>${formattedAgenda}</td>
+            </tr>
+            <tr>
+                <th>Others</th>
+                <td>${formattedNotes}</td>
+            </tr>
+            <tr>
+                <th>Announcements</th>
+                <td>${formattedActionItems}</td>
+            </tr>
+        </table>
+        <div class="footer">Thank you for your participation!</div>
+    </div>
+</body>
+</html>
+    `.trim();
 
-Attendees:
-${formattedAttendees}
+    // Create a Blob from the HTML string
+    const blob = new Blob([emailContent], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
 
-Presenters:
-${formattedPresenters}
+    // Open the new tab and download the HTML file
+    const newTab = window.open(url);
+    newTab.document.title = subject; // Set the title of the new tab
 
-Performance:
-${formattedAgenda}
+    // Create a temporary link to trigger the download
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${subject.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${today}.html`; // File named as subject + today's date
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url); // Release the object URL
+}
 
-Others:
-${formattedNotes}
+function formatSection(content) {
+    return content
+        .split("\n")
+        .map((item) => `- ${item}`)
+        .join("<br/>"); // Use <br/> for HTML line breaks
+}
 
-Announcements:
-${formattedActionItems}
-      `.trim();
 
-        const emailBody = encodeURIComponent(body);
-        window.location.href = `mailto:${recipient}?subject=${encodeURIComponent(
-          subject
-        )}&body=${emailBody}`;
-      }
-
-      function formatSection(content) {
-        return content
-          .split("\n")
-          .map((item) => `- ${item}`)
-          .join("\n");
-      }
     </script>
   </body>
 </html>
